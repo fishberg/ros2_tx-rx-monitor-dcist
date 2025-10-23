@@ -1,0 +1,12 @@
+launch:
+  - arg: { name: robot_name, default: "TESTBOT" }
+  - arg: { name: launch_tx_rx, default: "false" }
+
+  - push_ros_namespace: {namespace: $(var robot_name)}
+
+  # run our tx_rx_monitor_node
+  - node:
+      if: $(var launch_tx_rx)
+      pkg: tx_rx_monitor_dcist
+      exec: tx_rx_monitor_node
+      name: tx_rx_monitor_node

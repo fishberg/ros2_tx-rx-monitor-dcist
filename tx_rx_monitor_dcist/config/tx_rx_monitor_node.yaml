@@ -1,0 +1,5 @@
+# Configuration Settings for C94-M8P device
+tx_rx_monitor_node:
+  ros__parameters:
+    iface: wlan0
+    poll_rate_hz: 1
