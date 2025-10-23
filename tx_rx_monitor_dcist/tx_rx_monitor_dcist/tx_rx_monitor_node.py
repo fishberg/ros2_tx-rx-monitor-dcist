@@ -92,9 +92,12 @@ class TxRxMonitorNode(Node):
         self.robot_id = self.get_parameter("robot_id").get_parameter_value().integer_value
         self.nickname = self.get_parameter("nickname").get_parameter_value().string_value
         self.poll_rate_hz = self.get_parameter("poll_rate_hz").get_parameter_value().double_value
-
+        
+        IGNORE_INTERFACES = ['lo', 'docker0', 'br0']  # loopback interface
         net_dir = Path('/sys/class/net')
         interfaces = [p.name for p in net_dir.iterdir() if p.is_dir()]
+        interfaces = [iface for iface in interfaces if iface not in IGNORE_INTERFACES]
+        interfaces.sort()
         self.monitors = {iface: TxRxMonitor(iface) for iface in interfaces}
 
         self.status_pub = self.create_publisher(NodeInfoMsg, "tx_rx/status", qos_profile=QoSProfile(depth=10))
@@ -118,7 +121,6 @@ class TxRxMonitorNode(Node):
     def ros_timestamp(self):
         now = self.get_clock().now()
         return now.nanoseconds
-
     
     def timer_cb(self):
         status = NodeInfoMsg.NOMINAL
